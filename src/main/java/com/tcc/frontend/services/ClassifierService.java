@@ -1,9 +1,20 @@
 package com.tcc.frontend.services;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.tcc.frontend.model.ResultModel;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,24 +26,55 @@ public class ClassifierService {
 
     public ClassifierService() {
         this.http = new RestTemplate();
-        this.headers = null;
+        this.headers = new HttpHeaders();
+        this.headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        // this.headers.setAccept(acceptableMediaTypes);
 
     }
 
-    public String classify(MultipartFile file){
+    public ResultModel classify(final MultipartFile file) {
         try {
-            HttpEntity requestEntity = new HttpEntity<>(headers);
-            ResponseEntity<String> responseEntity;
 
-            responseEntity = this.http.exchange("sdafasdfasdf",
-                    HttpMethod.GET,
-                    requestEntity,
-                    String.class);
+            LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+            map.add("file", new MultipartInputStreamFileResource(file.getInputStream(), file.getOriginalFilename()) );
+
+
+            final HttpEntity requestEntity = new HttpEntity<>(map, headers);
+            ResponseEntity<ResultModel> responseEntity;
+
+
+            responseEntity = this.http.exchange(
+                "http://localhost:8080/classifier/single",
+                HttpMethod.POST,
+                requestEntity,
+                ResultModel.class);
 
             return responseEntity.getBody();
-        } catch (Exception e) {
-            System.out.println(e);    
+        } catch (final Exception e) {
+            System.out.println(e);
             return null;
         }
     }
+
+
+    class MultipartInputStreamFileResource extends InputStreamResource {
+
+        private final String filename;
+    
+        MultipartInputStreamFileResource(InputStream inputStream, String filename) {
+            super(inputStream);
+            this.filename = filename;
+        }
+    
+        @Override
+        public String getFilename() {
+            return this.filename;
+        }
+    
+        @Override
+        public long contentLength() throws IOException {
+            return -1; // we do not want to generally read the whole stream into memory ...
+        }
+    }
+    
 }
