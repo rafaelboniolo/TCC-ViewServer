@@ -1,11 +1,8 @@
 package com.tcc.frontend.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-
 import javax.servlet.http.HttpSession;
 
-import com.tcc.frontend.model.Image;
+import com.tcc.frontend.model.ResultModel;
 import com.tcc.frontend.services.ClassifierService;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -28,15 +25,29 @@ public class ClassifierController {
         return "classifier";
     }
 
-    @PostMapping(value="/savefile")  
-        public ModelAndView upload(@RequestParam MultipartFile file,HttpSession session){  
-        
-        try{  
+    @PostMapping("savefile")  
+    public ModelAndView upload(@RequestParam MultipartFile file,HttpSession session, Model model){  
+        try{
+            model.addAttribute("img", "");
+            model.addAttribute("class", "");
+            model.addAttribute("erro", "");
+
+            if(file == null || file.isEmpty()){
+                model.addAttribute("erro", "Selecione uma imagem antes de classificar");
+                return new ModelAndView("classifier");  
+            }
+                
             
-            new ClassifierService().classify(file);
-          
-        }catch(Exception e){
-            System.out.println(e);
+            ResultModel result = new ClassifierService().classify(file);
+            model.addAttribute("img", result.getImage());
+            
+            if(result.getPredictedClass().equals("1"))
+                model.addAttribute("class", "Normal");
+            else
+                model.addAttribute("class", "Anomalia");
+
+        }catch(Throwable th){
+            th.printStackTrace();
         }
 
         return new ModelAndView("classifier");  
