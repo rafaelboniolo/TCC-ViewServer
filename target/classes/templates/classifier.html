@@ -1,47 +1,115 @@
-<!DOCTYPE html>
-<html lang = "pt" xmlns = "http://www.w3.org/1999/xhtml" xmlns: th = "http://www.thymeleaf.org">
-
-    <head>
-        <meta charset="utf-8"></meta>
-        <title>Insert title here</title>
-        <link href="../static/css/global.css" th:href="@{/css/global.css}" rel="stylesheet" />
-        <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-
-    </head>
-    <header>
-        <h1 class="title">
-            Classifique sua image
-        </h1>
-    </header>
-    <body>    
-
-        <form method="post" action="/savefile" enctype="multipart/form-data">
-            <div class="file-upload"> 
-                <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Adicionar Imagem</button>
-
-                <div class="image-upload-wrap">
-                    <input class="file-upload-input" name='file' type='file' onchange="readURL(this);" accept="image/*" />
-                    <div class="drag-text">
-                        <h3>Arraste</h3>
-                    </div>
-                </div>
-                <div class="file-upload-content">
-                    <img class="file-upload-image" src="#" alt="your image" />
-                    <div class="image-title-wrap">
-                        <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
-                    </div>
-                </div>
-            </div>
+<body>
+        <link href="https://fonts.googleapis.com/css?family=Tomorrow&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Acme&display=swap" rel="stylesheet">
+        <script>
         
-            <div>
-                <button class="file-upload-btn" type="submit">
-                    <p>Classificar</p>
-                </button>
-            </div>
+            function a() {
+                document.getElementById('img').innerText = document.getElementById('file').files[0].name
+            }
+        
+        </script>
+        
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+        
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        
+            section{
+                margin-top: 30px;
+            }
+        
+            label:hover{
+                color: blue;
+            }
+        
+            footer{
+                padding: 12px;
+            }
+        
+            hr{
+                margin: 4px;
+            }
             
-        </form>
+        </style>
         
+        <div style="display: flex; flex-direction: column;">
+            <header style="
+                background-color: blue;
+                justify-content: center;
+                text-align: center;
+                font-family: 'Tomorrow', sans-serif;
+                padding: 20px;
+                display: flex; 
+                flex-direction: row;
+                ">
+                <img src="https://icon-library.net/images/data-model-icon/data-model-icon-10.jpg" style="width:80px; margin-right: 20px;"/>
+                <h2 style="color: azure;" >Classifique aqui sua imagem</h2>
+            </header>
         
-    </body>
-</html>
-
+            <section>
+                <form 
+                    action="savefile" 
+                    method="POST" 
+                    enctype="multipart/form-data" 
+                    style="display: flex;
+                        flex-direction: column;
+                        align-items: center;">  
+                    
+                    
+                    <label for="file" >
+                        <p  id="img" style="
+                            font-family: 'Tomorrow', sans-serif;
+                            font-size: 35px;
+                            ">
+                            Selecione sua imagem
+                        </p>
+                    </label>
+                    <input type="file" name="file" id="file" accept="image" onchange="a()" style="background-color: red; visibility: hidden;"/>
+                    
+                    
+                    <input type="submit" value="Classificar" style="
+                        background-color: blue;
+                        color: white;
+                        padding: 15px;
+                        font-family: 'Tomorrow', sans-serif;
+                        border-radius: 13px;
+                    "/>
+                    <p th:text="${erro}" ></p>  
+                </form>
+        
+                <div style="display: flex; justify-content: center; margin-top: 105px;">
+                    <p id="rel" style="
+                    font-family: 'Acme', sans-serif;
+                    font-size: 55px;"
+                    th:text="${class}">
+                    -</p>
+                </div>
+        
+            </section>
+            <footer style="position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: blue;
+                color: white;
+                text-align: center;
+                font-family: 'Tomorrow', sans-serif;
+        " 
+                   >
+            
+                <p>
+                    Esta página pertence ao Trabalho de Conclusão de Curso intitulado: Módulo de Reconhecimento de Imagens Anômalas Baseado em Microsserviços
+                    <br/>
+                    Seu objetivo é disponibilizar a classificação de imagens anômalas ao contexto da construção civil
+                    <hr/>
+                <p>Desenvolvido por: Rafael Boniolo - 2019 | Ciência da Computação</p>
+                <p>Orientado por: Me. Anderson Brilhador - 2019 | Ciência da Computação</p>
+            </footer>
+        </div>
+        
+</body>

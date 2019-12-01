@@ -44,7 +44,7 @@ public class ClassifierService {
 
 
             responseEntity = this.http.exchange(
-                "http://localhost:8080/classifier/single",
+                "http://localhost:9092/classifier/single",
                 HttpMethod.POST,
                 requestEntity,
                 ResultModel.class);
